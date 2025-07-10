@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Hotel Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: url('2df5767e7a47c5e7f82374b8e3beacc0.jpg') no-repeat center center;
+      background-size: 100% 100%;
+      min-height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+      color: #333;
+      text-align: center;
+    }
+h1{
+    color: #e0f190;
+}
+    .menu, .cart {
+      margin-bottom: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .menu-item, .cart-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffc8c8;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .menu-item span {
+      flex: 2;
+      min-width: 150px;
+    }
+
+    .menu-item select,
+    .menu-item button {
+      margin: 5px;
+    }
+
+    .cart {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .cart-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .cart-buttons button {
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    .fixed-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .clear-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .place-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    /* Payment Modal Styles */
+    .payment-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .payment-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .payment-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .payment-option {
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      background: white;
+      transition: all 0.3s;
+    }
+
+    .payment-option:hover {
+      border-color: #4CAF50;
+      background: #f0f8f0;
+    }
+
+    .payment-option.selected {
+      border-color: #4CAF50;
+      background: #e8f5e8;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .pay-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .pay-btn:hover {
+      background-color: #45a049;
+    }
+
+    /* Bill Modal Styles */
+    .bill-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .bill-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .bill-header {
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .bill-items {
+      text-align: left;
+      margin: 15px 0;
+    }
+
+    .bill-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .bill-total {
+      border-top: 2px solid #4CAF50;
+      padding-top: 10px;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .print-btn {
+      background-color: #2196F3;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .print-btn:hover {
+      background-color: #1976D2;
+    }
+
+    .close-btn {
+      background-color: #666;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .close-btn:hover {
+      background-color: #555;
+    }
+
+    @media (max-width: 600px) {
+      .menu-item, .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .menu-item div,
+      .cart-item {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+
+      .cart-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍽️ Hotel Menu</h1>
+
+  <!-- Search and Filter Section -->
+  <div style="max-width: 800px; margin: 0 auto 20px auto; text-align: center;">
+    <input type="text" id="searchInput" placeholder="🔍 Search menu items..." 
+           style="padding: 10px; width: 60%; border: 2px solid #ddd; border-radius: 5px; margin-right: 10px;">
+    <select id="categoryFilter" style="padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+      <option value="all">All Categories</option>
+      <option value="starters">Starters</option>
+      <option value="main">Main Course</option>
+      <option value="breads">Breads</option>
+      <option value="desserts">Desserts</option>
+      <option value="beverages">Beverages</option>
+    </select>
+  </div>
+
+  <!-- Legend -->
+  <div style="max-width: 800px; margin: 0 auto 20px auto; text-align: center; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px;">
+    <span style="margin-right: 15px;"><strong>Dietary:</strong> 🟢 Vegetarian | 🔴 Non-Vegetarian</span>
+    <span><strong>Spicy Level:</strong> <span style="color: #ff6b35;">🌶️</span> Mild | <span style="color: #ff6b35;">🌶️🌶️</span> Medium | <span style="color: #ff6b35;">🌶️🌶️🌶️</span> Hot</span>
+  </div>
+
+  <div class="menu">
+    <!-- Starters -->
+    <h3 style="color: #e0f190; text-align: left; margin: 20px 0 10px 0;">🥗 Starters</h3>
+    <div class="menu-item" data-category="starters">
+      <div>
+        <span><strong>Paneer Tikka - ₹180</strong> 🟢 <span style="color: #ff6b35;">🌶️🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Grilled cottage cheese with spices and herbs</p>
+      </div>
+      <div>
+        Qty: <input id="qty-paneer-tikka" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Paneer Tikka', 180, 'qty-paneer-tikka')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="starters">
+      <div>
+        <span><strong>Chicken 65 - ₹220</strong> 🔴 <span style="color: #ff6b35;">🌶️🌶️🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Spicy deep-fried chicken with curry leaves</p>
+      </div>
+      <div>
+        Qty: <input id="qty-chicken65" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Chicken 65', 220, 'qty-chicken65')">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Main Course -->
+    <h3 style="color: #e0f190; text-align: left; margin: 20px 0 10px 0;">🍛 Main Course</h3>
+    <div class="menu-item" data-category="main">
+      <div>
+        <span><strong>Paneer Butter Masala - ₹180</strong> 🟢 <span style="color: #ff6b35;">🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Cottage cheese in rich tomato gravy with cream</p>
+      </div>
+      <div>
+        Qty: <input id="qty-paneer" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Paneer Butter Masala', 180, 'qty-paneer')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="main">
+      <div>
+        <span><strong>Chicken Biryani - ₹220</strong> 🔴 <span style="color: #ff6b35;">🌶️🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Aromatic rice with tender chicken and spices</p>
+      </div>
+      <div>
+        Qty: <input id="qty-biryani" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Chicken Biryani', 220, 'qty-biryani')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="main">
+      <div>
+        <span><strong>Dal Makhani - ₹120</strong> 🟢 <span style="color: #ff6b35;">🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Slow-cooked black lentils with cream and butter</p>
+      </div>
+      <div>
+        Qty: <input id="qty-dal" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Dal Makhani', 120, 'qty-dal')">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Breads -->
+    <h3 style="color: #e0f190; text-align: left; margin: 20px 0 10px 0;">🫓 Breads</h3>
+    <div class="menu-item" data-category="breads">
+      <div>
+        <span><strong>Butter Naan - ₹40</strong> 🟢</span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Soft leavened bread brushed with butter</p>
+      </div>
+      <div>
+        Qty: <input id="qty-naan" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Butter Naan', 40, 'qty-naan')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="breads">
+      <div>
+        <span><strong>Garlic Naan - ₹50</strong> 🟢 <span style="color: #ff6b35;">🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Naan topped with garlic and herbs</p>
+      </div>
+      <div>
+        Qty: <input id="qty-garlic-naan" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Garlic Naan', 50, 'qty-garlic-naan')">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Desserts -->
+    <h3 style="color: #e0f190; text-align: left; margin: 20px 0 10px 0;">🍰 Desserts</h3>
+    <div class="menu-item" data-category="desserts">
+      <div>
+        <span><strong>Gulab Jamun - ₹80</strong> 🟢</span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Sweet milk dumplings in sugar syrup</p>
+      </div>
+      <div>
+        Qty: <input id="qty-gulab-jamun" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Gulab Jamun', 80, 'qty-gulab-jamun')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="desserts">
+      <div>
+        <span><strong>Rasmalai - ₹100</strong> 🟢</span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Soft cheese patties in sweetened milk</p>
+      </div>
+      <div>
+        Qty: <input id="qty-rasmalai" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Rasmalai', 100, 'qty-rasmalai')">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Beverages -->
+    <h3 style="color: #e0f190; text-align: left; margin: 20px 0 10px 0;">🥤 Beverages</h3>
+    <div class="menu-item" data-category="beverages">
+      <div>
+        <span><strong>Masala Chai - ₹30</strong> 🟢 <span style="color: #ff6b35;">🌶️</span></span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Spiced Indian tea with milk</p>
+      </div>
+      <div>
+        Qty: <input id="qty-chai" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Masala Chai', 30, 'qty-chai')">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="menu-item" data-category="beverages">
+      <div>
+        <span><strong>Lassi - ₹60</strong> 🟢</span>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">Sweet yogurt-based drink</p>
+      </div>
+      <div>
+        Qty: <input id="qty-lassi" type="number" value="1" min="1" max="10">
+        <button onclick="addToCart('Lassi', 60, 'qty-lassi')">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>🛒 Your Cart</h2>
+  <div class="cart" id="cart"></div>
+  <h3 id="total">Total: ₹0</h3>
+
+  <div class="cart-buttons">
+    <button class="clear-btn" onclick="clearCart()">🧹 Clear Cart</button>
+    <button class="place-btn" onclick="placeOrder()">✅ Place Order</button>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="payment-modal">
+    <div class="payment-content">
+      <span class="close" onclick="closePaymentModal()">&times;</span>
+      <h2>💳 Payment Options</h2>
+      <div style="margin-bottom: 15px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 5px;">
+        <p style="margin: 5px 0;"><strong>Subtotal:</strong> ₹<span id="paymentSubtotal">0</span></p>
+        <p style="margin: 5px 0;"><strong>GST (5%):</strong> ₹<span id="paymentGST">0</span></p>
+        <p style="margin: 5px 0; font-size: 18px; color: #4CAF50;"><strong>Total Amount:</strong> ₹<span id="paymentTotal">0</span></p>
+      </div>
+      <div style="margin-bottom: 15px;">
+        <input type="number" id="tableNumber" min="1" placeholder="Enter Table Number" style="padding: 10px; width: 80%; border: 2px solid #ddd; border-radius: 5px;">
+      </div>
+      <div class="payment-options">
+        <div class="payment-option" onclick="selectPayment('qr', event)">
+          <strong>📷 Scan QR to Pay</strong>
+          <p>Pay by scanning the QR code</p>
+        </div>
+      </div>
+      <div id="qrSection" style="display:none; margin: 15px 0; text-align:center;">
+        <img src="WhatsApp Image 2025-07-01 at 17.29.51_3e7c834f.jpg" alt="Scan to Pay QR" style="max-width:200px; width:100%; border:4px solid #eee; border-radius:10px; background:#fff;" />
+        <p style="margin-top:10px; color:#333;">Scan this QR code to pay online</p>
+      </div>
+      <button class="pay-btn" onclick="processPayment()">Pay Now</button>
+    </div>
+  </div>
+
+  <!-- Bill Modal -->
+  <div id="billModal" class="bill-modal">
+    <div class="bill-content">
+      <span class="close" onclick="closeBillModal()">&times;</span>
+      <div class="bill-header">
+        <h2>🧾 Restaurant Bill</h2>
+        <p>Table #<span id="billTableNumber">0</span></p>
+        <p>Date: <span id="billDate"></span></p>
+        <p>Payment Method: <span id="billPaymentMethod"></span></p>
+      </div>
+      <div id="billItems" class="bill-items">
+        <!-- Order items will be dynamically added here -->
+      </div>
+      <div class="bill-total">
+        <div class="bill-item">
+          <span>Subtotal:</span>
+          <span>₹<span id="billSubtotal">0</span></span>
+        </div>
+        <div class="bill-item">
+          <span>GST (5%):</span>
+          <span>₹<span id="billGST">0</span></span>
+        </div>
+        <div class="bill-item" style="font-weight: bold; border-top: 2px solid #4CAF50; padding-top: 10px;">
+          <span>Total:</span>
+          <span>₹<span id="billTotal">0</span></span>
+        </div>
+      </div>
+      <div style="margin-top: 20px;">
+        <button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>
+        <button class="print-btn" onclick="downloadBill()" style="background-color: #28a745;">📥 Download Bill</button>
+        <button class="close-btn" onclick="closeBillModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let cartItems = {};
+    let selectedPaymentMethod = '';
+    let currentOrderStatus = '';
+
+    // Load saved cart on page load
+    window.onload = function () {
+      const saved = localStorage.getItem("hotelCart");
+      if (saved) {
+        cartItems = JSON.parse(saved);
+        updateCart();
+      }
+    };
+
+    function addToCart(name, price, qtyId) {
+      const qty = parseInt(document.getElementById(qtyId).value);
+      if (cartItems[name]) {
+        cartItems[name].qty += qty;
+      } else {
+        cartItems[name] = { price: price, qty: qty };
+      }
+      saveCart();
+      updateCart();
+    }
+
+    function saveCart() {
+      localStorage.setItem("hotelCart", JSON.stringify(cartItems));
+    }
+
+    function updateCart() {
+      const cartDiv = document.getElementById("cart");
+      cartDiv.innerHTML = "";
+      let total = 0;
+
+      for (let item in cartItems) {
+        const { price, qty } = cartItems[item];
+        const itemTotal = price * qty;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <span>${item} x ${qty} = ₹${itemTotal}</span>
+          <button onclick="removeFromCart('${item}')" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">❌ Remove</button>
+        `;
+        cartDiv.appendChild(div);
+      }
+
+      document.getElementById("total").innerText = `Total: ₹${total}`;
+    }
+
+    function removeFromCart(itemName) {
+      if (confirm(`Remove ${itemName} from cart?`)) {
+        delete cartItems[itemName];
+        saveCart();
+        updateCart();
+      }
+    }
+
+    function clearCart() {
+      if (confirm("Clear the cart?")) {
+        cartItems = {};
+        localStorage.removeItem("hotelCart");
+        updateCart();
+        alert("Cart cleared.");
+      }
+    }
+
+    function placeOrder() {
+      if (Object.keys(cartItems).length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      // Calculate total with tax
+      let subtotal = 0;
+      for (let item in cartItems) {
+        const { price, qty } = cartItems[item];
+        subtotal += price * qty;
+      }
+      const gst = Math.round(subtotal * 0.05);
+      const total = subtotal + gst;
+
+      // Update payment breakdown
+      document.getElementById("paymentSubtotal").innerText = subtotal;
+      document.getElementById("paymentGST").innerText = gst;
+      document.getElementById("paymentTotal").innerText = total;
+      
+      // Show payment modal
+      document.getElementById("paymentModal").style.display = "block";
+    }
+
+    function closePaymentModal() {
+      document.getElementById("paymentModal").style.display = "none";
+      selectedPaymentMethod = '';
+      // Remove selected class from all payment options
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+    }
+
+    function selectPayment(method, event) {
+      selectedPaymentMethod = method;
+      // Remove selected class from all options
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      // Add selected class to clicked option
+      event.target.closest('.payment-option').classList.add('selected');
+      // Show QR section only if QR is selected
+      document.getElementById('qrSection').style.display = (method === 'qr') ? 'block' : 'none';
+    }
+
+    function processPayment() {
+      const tableNumber = document.getElementById("tableNumber").value.trim();
+      if (!tableNumber) {
+        alert("Please enter your table number!");
+        document.getElementById("tableNumber").focus();
+        return;
+      }
+      if (!selectedPaymentMethod) {
+        alert("Please select a payment method!");
+        return;
+      }
+
+      // Simulate payment processing
+      const payBtn = document.querySelector('.pay-btn');
+      payBtn.textContent = "Processing...";
+      payBtn.disabled = true;
+
+      setTimeout(() => {
+        // Payment successful
+        alert(`🎉 Payment successful! Your order for Table #${tableNumber} has been placed.`);
+        closePaymentModal();
+        
+        // Set order status
+        currentOrderStatus = 'confirmed';
+        showOrderStatus();
+        
+        // Show bill
+        let subtotal = 0;
+        for (let item in cartItems) {
+          const { price, qty } = cartItems[item];
+          subtotal += price * qty;
+        }
+        showBill(subtotal);
+        
+        // Reset button
+        payBtn.textContent = "Pay Now";
+        payBtn.disabled = false;
+      }, 2000);
+    }
+
+    function showOrderStatus() {
+      const statusDiv = document.createElement('div');
+      statusDiv.id = 'orderStatus';
+      statusDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 1001;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      `;
+      statusDiv.innerHTML = `
+        <h4>📋 Order Status</h4>
+        <p>Table #${document.getElementById("tableNumber").value}</p>
+        <p>Status: <strong>${currentOrderStatus.toUpperCase()}</strong></p>
+        <button onclick="this.parentElement.remove()" style="background: white; color: #4CAF50; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 10px;">Close</button>
+      `;
+      document.body.appendChild(statusDiv);
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        if (statusDiv.parentElement) {
+          statusDiv.remove();
+        }
+      }, 10000);
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("paymentModal");
+      if (event.target == modal) {
+        closePaymentModal();
+      }
+    }
+
+    // Search and Filter functionality
+    function filterMenu() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const selectedCategory = document.getElementById("categoryFilter").value;
+      const menuItems = document.querySelectorAll(".menu-item");
+
+      menuItems.forEach(item => {
+        const itemName = item.querySelector("span").textContent.toLowerCase();
+        const itemCategory = item.getAttribute("data-category");
+        
+        const matchesSearch = itemName.includes(searchTerm);
+        const matchesCategory = selectedCategory === "all" || itemCategory === selectedCategory;
+        
+        if (matchesSearch && matchesCategory) {
+          item.style.display = "flex";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+
+    // Add event listeners for search and filter
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById("searchInput").addEventListener("input", filterMenu);
+      document.getElementById("categoryFilter").addEventListener("change", filterMenu);
+    });
+
+    function showBill(total) {
+      const tableNumber = document.getElementById("tableNumber").value;
+      const paymentMethod = selectedPaymentMethod;
+      const currentDate = new Date().toLocaleDateString();
+      const currentTime = new Date().toLocaleTimeString();
+
+      // Calculate tax (5% GST)
+      const subtotal = total;
+      const gst = Math.round(subtotal * 0.05);
+      const finalTotal = subtotal + gst;
+
+      // Update bill header information
+      document.getElementById("billTableNumber").innerText = tableNumber;
+      document.getElementById("billDate").innerText = `${currentDate} at ${currentTime}`;
+      document.getElementById("billPaymentMethod").innerText = paymentMethod.toUpperCase();
+      
+      // Clear and populate bill items
+      const billItemsDiv = document.getElementById("billItems");
+      billItemsDiv.innerHTML = "";
+
+      for (let item in cartItems) {
+        const { price, qty } = cartItems[item];
+        const itemTotal = price * qty;
+
+        const div = document.createElement("div");
+        div.className = "bill-item";
+        div.innerHTML = `
+          <span>${item} x ${qty}</span>
+          <span>₹${itemTotal}</span>
+        `;
+        billItemsDiv.appendChild(div);
+      }
+
+      // Update totals
+      document.getElementById("billSubtotal").innerText = subtotal;
+      document.getElementById("billGST").innerText = gst;
+      document.getElementById("billTotal").innerText = finalTotal;
+      
+      document.getElementById("billModal").style.display = "block";
+      
+      // Update payment total to include tax
+      document.getElementById("paymentTotal").innerText = `₹${finalTotal}`;
+    }
+
+    function closeBillModal() {
+      document.getElementById("billModal").style.display = "none";
+    }
+
+    function printBill() {
+      const printWindow = window.open('', '_blank');
+      const billContent = document.querySelector('.bill-content').innerHTML;
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Restaurant Bill</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .bill-header { border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+              .bill-items { margin: 15px 0; }
+              .bill-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+              .bill-total { border-top: 2px solid #4CAF50; padding-top: 10px; margin-top: 15px; font-weight: bold; font-size: 18px; }
+            </style>
+          </head>
+          <body>
+            ${billContent}
+          </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    function downloadBill() {
+      const tableNumber = document.getElementById("billTableNumber").innerText;
+      const date = document.getElementById("billDate").innerText;
+      const subtotal = document.getElementById("billSubtotal").innerText;
+      const gst = document.getElementById("billGST").innerText;
+      const total = document.getElementById("billTotal").innerText;
+      // Get all bill items
+      const billItems = document.querySelectorAll('#billItems .bill-item');
+      let itemsText = '';
+      billItems.forEach(item => {
+        const spans = item.querySelectorAll('span');
+        if (spans.length >= 2) {
+          itemsText += `${spans[0].innerText} = ${spans[1].innerText}\n`;
+        }
+      });
+      // Create formatted bill text
+      const billText = `
+RESTAURANT BILL\n-----------------------------\nTable #: ${tableNumber}\nDate: ${date}\n\nORDER ITEMS:\n${itemsText}\n-----------------------------\nSubtotal: ₹${subtotal}\nGST (5%): ₹${gst}\nTotal: ₹${total}\n-----------------------------\nThank you for dining with us!\nPlease visit again!\n`;
+      // Create and download the file
+      const blob = new Blob([billText], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `restaurant_bill_table_${tableNumber}_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }
+  </script>
+
+</body>
+</html>
